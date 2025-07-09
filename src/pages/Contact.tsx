@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { GlowCard } from '@/components/ui/glow-card';
-import { TechButton } from '@/components/ui/tech-button';
+import { CleanCard } from '@/components/ui/clean-card';
+import { CleanButton } from '@/components/ui/clean-button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -69,7 +69,7 @@ export const Contact = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h1 className="text-4xl md:text-6xl font-bold text-glow mb-6">Contact</h1>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">Contact</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Let's connect and discuss cybersecurity, technology, or potential collaborations
           </p>
@@ -82,7 +82,7 @@ export const Contact = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <GlowCard className="p-8 h-full">
+            <CleanCard className="p-8 h-full">
               <div className="flex items-center gap-3 mb-6">
                 <Terminal className="w-6 h-6 text-primary" />
                 <h2 className="text-2xl font-bold">Send Message</h2>
@@ -140,10 +140,10 @@ export const Contact = () => {
                   />
                 </div>
 
-                <TechButton type="submit" className="w-full">
+                <CleanButton type="submit" className="w-full">
                   <Send className="w-4 h-4 mr-2" />
                   Send Message
-                </TechButton>
+                </CleanButton>
               </form>
 
               {/* Terminal-style footer */}
@@ -160,7 +160,7 @@ export const Contact = () => {
                   <p className="text-primary">Connection established... <span className="animate-pulse">|</span></p>
                 </div>
               </div>
-            </GlowCard>
+            </CleanCard>
           </motion.div>
 
           {/* Contact Info & Social */}
@@ -171,7 +171,7 @@ export const Contact = () => {
             className="space-y-8"
           >
             {/* Social Links */}
-            <GlowCard className="p-8">
+            <CleanCard className="p-8">
               <h2 className="text-2xl font-bold mb-6">Connect With Me</h2>
               <div className="space-y-4">
                 {socialLinks.map((link, index) => (
@@ -191,10 +191,10 @@ export const Contact = () => {
                   </motion.a>
                 ))}
               </div>
-            </GlowCard>
+            </CleanCard>
 
             {/* Availability */}
-            <GlowCard className="p-8">
+            <CleanCard className="p-8">
               <h2 className="text-2xl font-bold mb-6">Availability</h2>
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
@@ -210,35 +210,35 @@ export const Contact = () => {
                   <span className="text-sm">Seeking mentorship opportunities</span>
                 </div>
               </div>
-            </GlowCard>
+            </CleanCard>
 
             {/* Quick Contact */}
-            <GlowCard className="p-8">
+            <CleanCard className="p-8">
               <h2 className="text-2xl font-bold mb-6">Quick Contact</h2>
               <div className="space-y-4">
                 <p className="text-muted-foreground text-sm">
                   For urgent matters or quick questions, feel free to reach out directly:
                 </p>
                 <div className="flex flex-col gap-3">
-                  <TechButton
-                    variant="secondary"
+                  <CleanButton
+                    variant="outline"
                     className="justify-start"
                     onClick={() => window.open('mailto:hello@freddie.dev', '_blank')}
                   >
                     <Mail className="w-4 h-4 mr-2" />
                     hello@freddie.dev
-                  </TechButton>
-                  <TechButton
-                    variant="accent"
+                  </CleanButton>
+                  <CleanButton
+                    variant="outline"
                     className="justify-start"
                     onClick={() => window.open('https://linkedin.com/in/freddie', '_blank')}
                   >
                     <Linkedin className="w-4 h-4 mr-2" />
                     LinkedIn DM
-                  </TechButton>
+                  </CleanButton>
                 </div>
               </div>
-            </GlowCard>
+            </CleanCard>
           </motion.div>
         </div>
       </div>

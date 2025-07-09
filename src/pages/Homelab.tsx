@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { GlowCard } from '@/components/ui/glow-card';
+import { CleanCard } from '@/components/ui/clean-card';
+import { CleanButton } from '@/components/ui/clean-button';
 import { Badge } from '@/components/ui/badge';
-import { TechButton } from '@/components/ui/tech-button';
 import { 
   Server, 
   Router, 
@@ -98,7 +98,7 @@ export const Homelab = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h1 className="text-4xl md:text-6xl font-bold text-glow mb-6">Homelab</h1>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">Homelab</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Interactive visualization of my cybersecurity lab infrastructure
           </p>
@@ -111,7 +111,7 @@ export const Homelab = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="mb-16"
         >
-          <GlowCard className="p-8 min-h-[500px] relative overflow-hidden">
+          <CleanCard className="p-8 min-h-[500px] relative overflow-hidden">
             <div className="absolute inset-0 tech-grid opacity-10" />
             
             {/* Connection Lines */}
@@ -188,7 +188,7 @@ export const Homelab = () => {
                 <span className="text-sm text-muted-foreground">Management</span>
               </div>
             </div>
-          </GlowCard>
+          </CleanCard>
         </motion.div>
 
         {/* Equipment Grid */}
@@ -205,7 +205,7 @@ export const Homelab = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
             >
-              <GlowCard className="p-6 h-full">
+              <CleanCard className="p-6 h-full">
                 <div className="flex items-start gap-4 mb-4">
                   <div className="p-3 rounded-lg bg-primary/10">
                     <device.icon className="w-6 h-6 text-primary" />
@@ -236,16 +236,16 @@ export const Homelab = () => {
 
                 {/* Quick Actions */}
                 <div className="flex gap-2 mt-4 pt-4 border-t border-border/50">
-                  <TechButton size="sm" variant="secondary" className="flex-1">
+                  <CleanButton size="sm" variant="outline" className="flex-1">
                     <Info className="w-4 h-4 mr-2" />
                     Details
-                  </TechButton>
-                  <TechButton size="sm" className="flex-1">
+                  </CleanButton>
+                  <CleanButton size="sm" className="flex-1">
                     <Zap className="w-4 h-4 mr-2" />
                     Monitor
-                  </TechButton>
+                  </CleanButton>
                 </div>
-              </GlowCard>
+              </CleanCard>
             </motion.div>
           ))}
         </motion.div>
@@ -257,7 +257,7 @@ export const Homelab = () => {
           transition={{ duration: 0.6, delay: 0.8 }}
           className="mt-16"
         >
-          <GlowCard className="p-8">
+          <CleanCard className="p-8">
             <div className="max-w-3xl mx-auto text-center">
               <h2 className="text-3xl font-bold mb-6">Lab Purpose & Learning</h2>
               <p className="text-muted-foreground mb-8">
@@ -297,7 +297,7 @@ export const Homelab = () => {
                 </div>
               </div>
             </div>
-          </GlowCard>
+          </CleanCard>
         </motion.div>
       </div>
     </div>

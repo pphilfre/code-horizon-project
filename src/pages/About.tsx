@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { GlowCard } from '@/components/ui/glow-card';
+import { CleanCard } from '@/components/ui/clean-card';
 import { Badge } from '@/components/ui/badge';
 import { Award, Calendar, Target, BookOpen } from 'lucide-react';
 
@@ -48,7 +48,7 @@ export const About = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h1 className="text-4xl md:text-6xl font-bold text-glow mb-6">About Me</h1>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">About Me</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Passionate about cybersecurity, technology, and building secure digital infrastructures
           </p>
@@ -61,7 +61,7 @@ export const About = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <GlowCard>
+            <CleanCard>
               <div className="flex items-center gap-3 mb-4">
                 <BookOpen className="w-6 h-6 text-primary" />
                 <h2 className="text-2xl font-bold">My Journey</h2>
@@ -78,7 +78,7 @@ export const About = () => {
                 <Badge variant="outline" className="text-primary border-primary">Risk Assessment</Badge>
                 <Badge variant="outline" className="text-primary border-primary">Penetration Testing</Badge>
               </div>
-            </GlowCard>
+            </CleanCard>
           </motion.div>
 
           {/* Goals Section */}
@@ -87,7 +87,7 @@ export const About = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <GlowCard>
+            <CleanCard>
               <div className="flex items-center gap-3 mb-4">
                 <Target className="w-6 h-6 text-accent" />
                 <h2 className="text-2xl font-bold">Career Goals</h2>
@@ -112,7 +112,7 @@ export const About = () => {
                   </p>
                 </div>
               </div>
-            </GlowCard>
+            </CleanCard>
           </motion.div>
         </div>
 
@@ -152,7 +152,7 @@ export const About = () => {
                   
                   {/* Content */}
                   <div className="flex-1">
-                    <GlowCard hoverable={false} className="p-4">
+                    <CleanCard hoverable={false} className="p-4">
                       <div className="flex items-center gap-2 mb-2">
                         <h3 className="font-semibold text-lg">{item.title}</h3>
                         <Badge variant={item.status === 'completed' ? 'default' : 
@@ -161,7 +161,7 @@ export const About = () => {
                         </Badge>
                       </div>
                       <p className="text-muted-foreground">{item.description}</p>
-                    </GlowCard>
+                    </CleanCard>
                   </div>
                 </motion.div>
               ))}
@@ -188,7 +188,7 @@ export const About = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4, delay: 0.7 + index * 0.1 }}
               >
-                <GlowCard className="p-6">
+                <CleanCard className="p-6">
                   <div className="flex justify-between items-center mb-3">
                     <h3 className="font-semibold text-lg">{cert.name}</h3>
                     <Badge variant={cert.progress > 0 ? 'default' : 'outline'}>
@@ -202,7 +202,7 @@ export const About = () => {
                     />
                   </div>
                   <p className="text-sm text-muted-foreground">{cert.progress}% Complete</p>
-                </GlowCard>
+                </CleanCard>
               </motion.div>
             ))}
           </div>

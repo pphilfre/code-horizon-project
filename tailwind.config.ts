@@ -26,8 +26,7 @@ export default {
 				foreground: 'hsl(var(--foreground))',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))',
-					glow: 'hsl(var(--primary-glow))'
+					foreground: 'hsl(var(--primary-foreground))'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
@@ -43,8 +42,7 @@ export default {
 				},
 				accent: {
 					DEFAULT: 'hsl(var(--accent))',
-					foreground: 'hsl(var(--accent-foreground))',
-					glow: 'hsl(var(--accent-glow))'
+					foreground: 'hsl(var(--accent-foreground))'
 				},
 				popover: {
 					DEFAULT: 'hsl(var(--popover))',
@@ -56,14 +54,11 @@ export default {
 				}
 			},
 			backgroundImage: {
-				'gradient-primary': 'var(--gradient-primary)',
-				'gradient-accent': 'var(--gradient-accent)',
-				'gradient-background': 'var(--gradient-background)',
-				'gradient-glow': 'var(--gradient-glow)'
+				'gradient-orange': 'var(--gradient-orange)',
+				'gradient-orange-radial': 'var(--gradient-orange-radial)'
 			},
 			boxShadow: {
 				'glow': 'var(--shadow-glow)',
-				'accent': 'var(--shadow-accent)',
 				'subtle': 'var(--shadow-subtle)'
 			},
 			borderRadius: {

@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
-import { GlowCard } from '@/components/ui/glow-card';
-import { TechButton } from '@/components/ui/tech-button';
+import { CleanCard } from '@/components/ui/clean-card';
+import { CleanButton } from '@/components/ui/clean-button';
 import { Badge } from '@/components/ui/badge';
 import { Github, ExternalLink, Shield, Network, Database, Terminal } from 'lucide-react';
 
@@ -91,7 +91,7 @@ export const Projects = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h1 className="text-4xl md:text-6xl font-bold text-glow mb-6">Projects</h1>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">Projects</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Showcase of cybersecurity projects, tools, and research implementations
           </p>
@@ -106,7 +106,7 @@ export const Projects = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
             >
-              <GlowCard className="h-full p-6 group">
+              <CleanCard className="h-full p-6 group">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div className="p-2 rounded-lg bg-primary/10">
@@ -149,25 +149,25 @@ export const Projects = () => {
 
                 {/* Actions */}
                 <div className="flex gap-3 mt-auto">
-                  <TechButton
+                  <CleanButton
                     size="sm"
-                    variant="secondary"
+                    variant="outline"
                     className="flex-1"
                     onClick={() => window.open(project.github, '_blank')}
                   >
                     <Github className="w-4 h-4 mr-2" />
                     Code
-                  </TechButton>
-                  <TechButton
+                  </CleanButton>
+                  <CleanButton
                     size="sm"
                     className="flex-1"
                     onClick={() => window.open(project.demo, '_blank')}
                   >
                     <ExternalLink className="w-4 h-4 mr-2" />
                     Demo
-                  </TechButton>
+                  </CleanButton>
                 </div>
-              </GlowCard>
+              </CleanCard>
             </motion.div>
           ))}
         </div>
@@ -179,7 +179,7 @@ export const Projects = () => {
           transition={{ duration: 0.6, delay: 0.8 }}
           className="mt-16 text-center"
         >
-          <GlowCard className="p-8">
+          <CleanCard className="p-8">
             <div className="max-w-2xl mx-auto">
               <h2 className="text-2xl font-bold mb-4">More Projects Coming Soon</h2>
               <p className="text-muted-foreground mb-6">
@@ -187,19 +187,19 @@ export const Projects = () => {
                 Check back regularly for updates, or follow my GitHub for the latest developments.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <TechButton
-                  onClick={() => window.open('https://github.com/freddie', '_blank')}
-                >
-                  <Github className="w-4 h-4 mr-2" />
-                  Follow on GitHub
-                </TechButton>
-                <TechButton variant="accent">
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                  View All Projects
-                </TechButton>
+              <CleanButton
+                onClick={() => window.open('https://github.com/freddie', '_blank')}
+              >
+                <Github className="w-4 h-4 mr-2" />
+                Follow on GitHub
+              </CleanButton>
+              <CleanButton variant="outline">
+                <ExternalLink className="w-4 h-4 mr-2" />
+                View All Projects
+              </CleanButton>
               </div>
             </div>
-          </GlowCard>
+          </CleanCard>
         </motion.div>
       </div>
     </div>
