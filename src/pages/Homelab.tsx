@@ -1,8 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { CleanCard } from '@/components/ui/clean-card';
-import { CleanButton } from '@/components/ui/clean-button';
-import { Badge } from '@/components/ui/badge';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Server, 
   Router, 
@@ -11,295 +8,492 @@ import {
   Cpu, 
   HardDrive, 
   Zap, 
-  Thermometer,
-  Info
+  X,
+  Activity,
+  Database,
+  Settings,
+  ExternalLink
 } from 'lucide-react';
 
 export const Homelab = () => {
+  const [selectedDevice, setSelectedDevice] = useState<any>(null);
+
   const equipment = [
     {
       id: 1,
       name: 'Cisco 1841 Router',
       type: 'Router',
       icon: Router,
+      status: 'Online',
+      uptime: '247 days',
+      cpu: '12%',
+      memory: '34%',
       specs: {
+        'Model': 'Cisco 1841',
         'CPU': 'MIPS 32-bit @ 266MHz',
-        'RAM': '256MB',
-        'Flash': '64MB',
-        'Interfaces': '2x FastEthernet, 2x Serial',
-        'Status': 'Online'
+        'RAM': '256MB DDR2',
+        'Flash': '64MB CompactFlash',
+        'Interfaces': '2x FastEthernet, 2x Serial WIC',
+        'IOS Version': '15.1(4)M12a',
+        'Uptime': '247 days, 14 hours',
+        'Last Restart': 'Apr 15, 2024'
       },
-      description: 'Enterprise-grade router for network segmentation and routing protocols',
-      position: { x: 20, y: 30 }
+      description: 'Enterprise-grade router handling network segmentation and inter-VLAN routing for the homelab environment.',
+      purpose: 'Network routing, OSPF, EIGRP protocol testing, and WAN simulation',
+      connections: ['ASA-5525', 'SG200-24']
     },
     {
       id: 2,
       name: 'Cisco ASA 5525-X',
       type: 'Firewall',
       icon: Shield,
+      status: 'Online',
+      uptime: '180 days',
+      cpu: '8%',
+      memory: '45%',
       specs: {
-        'Throughput': '2 Gbps',
-        'Concurrent Sessions': '750K',
-        'VPN Tunnels': '750',
-        'Interfaces': '8x GigE, 2x SFP+',
-        'Status': 'Online'
+        'Model': 'ASA 5525-X',
+        'Firewall Throughput': '2 Gbps',
+        'VPN Throughput': '250 Mbps',
+        'Concurrent Sessions': '750,000',
+        'VPN Tunnels': '750 IPSec',
+        'Interfaces': '8x GigE Copper, 2x SFP+',
+        'Software Version': '9.16(4)42',
+        'Memory': '8GB RAM, 8GB Flash'
       },
-      description: 'Next-generation firewall with advanced threat protection',
-      position: { x: 50, y: 20 }
+      description: 'Next-generation firewall providing advanced threat protection and VPN capabilities.',
+      purpose: 'Perimeter security, intrusion prevention, SSL/IPSec VPN, and threat analysis',
+      connections: ['Router-1841', 'SG200-24', 'x3550-M5']
     },
     {
       id: 3,
       name: 'Cisco SG200-24',
       type: 'Switch',
       icon: Network,
+      status: 'Online',
+      uptime: '89 days',
+      cpu: '3%',
+      memory: '28%',
       specs: {
-        'Ports': '24x GigE + 2x SFP',
+        'Model': 'SG200-24',
+        'Ports': '24x Gigabit Ethernet + 2x SFP',
         'Switching Capacity': '52 Gbps',
-        'MAC Table': '8K',
-        'VLANs': '4K',
-        'Status': 'Online'
+        'MAC Address Table': '8,192 entries',
+        'VLANs': '4,096 supported',
+        'Firmware': '1.4.2.04',
+        'PoE': 'No PoE support',
+        'Management': 'Web-based, SNMP'
       },
-      description: '24-port managed switch with VLAN and QoS capabilities',
-      position: { x: 80, y: 40 }
+      description: '24-port managed switch providing VLAN segmentation and Layer 2 switching.',
+      purpose: 'VLAN configuration, STP testing, port mirroring, and network segmentation',
+      connections: ['ASA-5525', 'x3550-M5', 'Router-1841']
     },
     {
       id: 4,
       name: 'Lenovo x3550 M5',
       type: 'Server',
       icon: Server,
+      status: 'Online',
+      uptime: '156 days',
+      cpu: '67%',
+      memory: '78%',
       specs: {
-        'CPU': '2x Intel Xeon E5-2650 v4',
-        'RAM': '128GB DDR4',
-        'Storage': '4x 2TB SAS',
-        'Network': '4x 1GbE',
-        'Status': 'Online'
+        'Model': 'ThinkServer x3550 M5',
+        'CPU': '2x Intel Xeon E5-2650 v4 (24 cores)',
+        'RAM': '128GB DDR4 ECC',
+        'Storage': '4x 2TB SAS 7.2K + 2x 480GB SSD',
+        'RAID': 'Hardware RAID 10',
+        'Network': '4x 1GbE + 2x 10GbE SFP+',
+        'Hypervisor': 'VMware ESXi 7.0 U3',
+        'VMs Running': '12 active virtual machines'
       },
-      description: 'High-performance server for virtualization and security labs',
-      position: { x: 40, y: 60 }
+      description: 'High-performance server running virtualized security tools and isolated lab environments.',
+      purpose: 'Virtualization platform, security tool hosting, isolated testing environments',
+      connections: ['ASA-5525', 'SG200-24']
     }
   ];
 
-  const [selectedDevice, setSelectedDevice] = useState(null);
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Online': return 'text-green-400';
+      case 'Warning': return 'text-yellow-400';
+      case 'Offline': return 'text-red-400';
+      default: return 'text-gray-400';
+    }
+  };
 
-  const connections = [
-    { from: 1, to: 2, type: 'ethernet' },
-    { from: 2, to: 3, type: 'ethernet' },
-    { from: 3, to: 4, type: 'ethernet' },
-    { from: 1, to: 4, type: 'management' }
-  ];
+  const getStatusDot = (status: string) => {
+    switch (status) {
+      case 'Online': return 'bg-green-400';
+      case 'Warning': return 'bg-yellow-400';
+      case 'Offline': return 'bg-red-400';
+      default: return 'bg-gray-400';
+    }
+  };
 
   return (
-    <div className="min-h-screen pt-24 pb-16">
-      <div className="max-w-6xl mx-auto px-6">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">Homelab</h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Interactive visualization of my cybersecurity lab infrastructure
-          </p>
-        </motion.div>
+    <div className="min-h-screen bg-black relative overflow-hidden">
+      {/* Background gradient similar to home page */}
+      <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900/50 to-red-900/20" />
+      
+      {/* Main content */}
+      <div className="relative z-10 pt-24 pb-16">
+        <div className="max-w-7xl mx-auto px-6">
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
+          >
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-light leading-tight text-white mb-6">
+              Cybersecurity{' '}
+              <span className="text-red-400">Homelab</span>
+            </h1>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Interactive visualization of my enterprise-grade security infrastructure for hands-on learning and testing
+            </p>
+          </motion.div>
 
-        {/* Network Diagram */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-16"
-        >
-          <CleanCard className="p-8 min-h-[500px] relative overflow-hidden">
-            <div className="absolute inset-0 tech-grid opacity-10" />
-            
-            {/* Connection Lines */}
-            <svg 
-              className="absolute inset-0 w-full h-full pointer-events-none"
-              style={{ zIndex: 1 }}
-            >
-              {connections.map((conn, idx) => {
-                const fromDevice = equipment.find(e => e.id === conn.from);
-                const toDevice = equipment.find(e => e.id === conn.to);
-                if (!fromDevice || !toDevice) return null;
-                
-                const x1 = `${fromDevice.position.x}%`;
-                const y1 = `${fromDevice.position.y}%`;
-                const x2 = `${toDevice.position.x}%`;
-                const y2 = `${toDevice.position.y}%`;
-                
-                return (
-                  <line
-                    key={idx}
-                    x1={x1}
-                    y1={y1}
-                    x2={x2}
-                    y2={y2}
-                    stroke={conn.type === 'ethernet' ? '#00d4ff' : '#9d4edd'}
-                    strokeWidth="2"
-                    strokeDasharray={conn.type === 'management' ? '5,5' : '0'}
-                    className="animate-pulse"
-                  />
-                );
-              })}
-            </svg>
-
-            {/* Equipment Nodes */}
-            {equipment.map((device, index) => (
-              <motion.div
-                key={device.id}
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
-                className="absolute cursor-pointer"
-                style={{
-                  left: `${device.position.x}%`,
-                  top: `${device.position.y}%`,
-                  transform: 'translate(-50%, -50%)',
-                  zIndex: 10
-                }}
-                onClick={() => setSelectedDevice(device)}
-              >
-                <div className="group relative">
-                  <div className="w-16 h-16 bg-gradient-primary rounded-xl flex items-center justify-center shadow-glow hover:shadow-accent transition-all duration-300 transform hover:scale-110">
-                    <device.icon className="w-8 h-8 text-background" />
-                  </div>
+          {/* Server Rack Visualization */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="mb-16"
+          >
+            <div className="bg-gray-900/40 backdrop-blur-sm border border-gray-800 rounded-2xl p-8 min-h-[700px] flex justify-center items-center">
+              {/* Server Rack SVG */}
+              <div className="relative">
+                <svg width="400" height="600" viewBox="0 0 400 600" className="mx-auto">
+                  {/* Rack Frame */}
+                  <defs>
+                    <linearGradient id="rackGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#374151" />
+                      <stop offset="50%" stopColor="#4b5563" />
+                      <stop offset="100%" stopColor="#374151" />
+                    </linearGradient>
+                    <linearGradient id="deviceGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#1f2937" />
+                      <stop offset="50%" stopColor="#374151" />
+                      <stop offset="100%" stopColor="#1f2937" />
+                    </linearGradient>
+                  </defs>
                   
-                  {/* Device Label */}
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 text-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="bg-card border border-border rounded-lg px-3 py-2 shadow-subtle">
-                      <p className="font-medium text-sm">{device.name}</p>
-                      <p className="text-xs text-muted-foreground">{device.type}</p>
+                  {/* Rack outline */}
+                  <rect x="50" y="20" width="300" height="560" fill="url(#rackGradient)" stroke="#6b7280" strokeWidth="2" rx="8" />
+                  
+                  {/* Rack mounting holes */}
+                  {[...Array(28)].map((_, i) => (
+                    <g key={i}>
+                      <circle cx="70" cy={50 + i * 20} r="2" fill="#9ca3af" />
+                      <circle cx="330" cy={50 + i * 20} r="2" fill="#9ca3af" />
+                    </g>
+                  ))}
+                  
+                  {/* Device slots */}
+                  {equipment.map((device, index) => {
+                    const yPos = 60 + index * 120;
+                    return (
+                      <g key={device.id}>
+                        {/* Device rectangle */}
+                        <rect
+                          x="80"
+                          y={yPos}
+                          width="240"
+                          height="100"
+                          fill="url(#deviceGradient)"
+                          stroke={device.status === 'Online' ? '#10b981' : '#ef4444'}
+                          strokeWidth="2"
+                          rx="4"
+                          className="cursor-pointer hover:stroke-red-400 transition-colors duration-200"
+                          onClick={() => setSelectedDevice(device)}
+                        />
+                        
+                        {/* Device icon */}
+                        <foreignObject x="90" y={yPos + 10} width="40" height="40">
+                          <div className="w-10 h-10 bg-red-600/20 rounded-lg flex items-center justify-center">
+                            <device.icon className="w-6 h-6 text-red-400" />
+                          </div>
+                        </foreignObject>
+                        
+                        {/* Device name */}
+                        <text x="140" y={yPos + 25} fill="#ffffff" fontSize="14" fontWeight="600">
+                          {device.name}
+                        </text>
+                        
+                        {/* Device type */}
+                        <text x="140" y={yPos + 45} fill="#9ca3af" fontSize="12">
+                          {device.type}
+                        </text>
+                        
+                        {/* Status indicator */}
+                        <circle 
+                          cx="300" 
+                          cy={yPos + 20} 
+                          r="4" 
+                          fill={device.status === 'Online' ? '#10b981' : '#ef4444'}
+                          className="animate-pulse"
+                        />
+                        
+                        {/* Status text */}
+                        <text x="280" y={yPos + 40} fill={device.status === 'Online' ? '#10b981' : '#ef4444'} fontSize="10" textAnchor="middle">
+                          {device.status}
+                        </text>
+                        
+                        {/* CPU usage bar */}
+                        <rect x="140" y={yPos + 55} width="100" height="8" fill="#374151" rx="4" />
+                        <rect 
+                          x="140" 
+                          y={yPos + 55} 
+                          width={parseInt(device.cpu)} 
+                          height="8" 
+                          fill="#f59e0b" 
+                          rx="4"
+                        />
+                        <text x="140" y={yPos + 75} fill="#9ca3af" fontSize="10">
+                          CPU: {device.cpu}
+                        </text>
+                        
+                        {/* Memory usage bar */}
+                        <rect x="140" y={yPos + 80} width="100" height="8" fill="#374151" rx="4" />
+                        <rect 
+                          x="140" 
+                          y={yPos + 80} 
+                          width={parseInt(device.memory)} 
+                          height="8" 
+                          fill="#8b5cf6" 
+                          rx="4"
+                        />
+                        <text x="200" y={yPos + 75} fill="#9ca3af" fontSize="10">
+                          RAM: {device.memory}
+                        </text>
+                        
+                        {/* Power LED */}
+                        <circle 
+                          cx="310" 
+                          cy={yPos + 80} 
+                          r="3" 
+                          fill="#10b981"
+                          className="animate-pulse"
+                        />
+                      </g>
+                    );
+                  })}
+                  
+                  {/* Rack label */}
+                  <text x="200" y="40" fill="#ffffff" fontSize="16" fontWeight="600" textAnchor="middle">
+                    Server Rack
+                  </text>
+                </svg>
+                
+                {/* Rack info panel */}
+                <div className="absolute -right-48 top-0 bg-gray-800/60 backdrop-blur-sm border border-gray-700 rounded-lg p-4 w-40">
+                  <h3 className="text-white font-semibold text-sm mb-3">Rack Status</h3>
+                  <div className="space-y-2 text-xs">
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Units Used:</span>
+                      <span className="text-white">16U</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Power Draw:</span>
+                      <span className="text-green-400">1.2kW</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Temperature:</span>
+                      <span className="text-blue-400">24°C</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Devices:</span>
+                      <span className="text-white">{equipment.length}</span>
                     </div>
                   </div>
                 </div>
-              </motion.div>
-            ))}
-
-            {/* Legend */}
-            <div className="absolute bottom-4 left-4 space-y-2">
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-0.5 bg-primary" />
-                <span className="text-sm text-muted-foreground">Ethernet</span>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-0.5 bg-accent" style={{ background: 'repeating-linear-gradient(to right, #9d4edd 0, #9d4edd 5px, transparent 5px, transparent 10px)' }} />
-                <span className="text-sm text-muted-foreground">Management</span>
+              
+              {/* Instructions */}
+              <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-center">
+                <p className="text-gray-400 text-sm">Click on any device in the rack to view detailed information</p>
               </div>
             </div>
-          </CleanCard>
-        </motion.div>
+          </motion.div>
 
-        {/* Equipment Grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-8"
-        >
-          {equipment.map((device, index) => (
+          {/* Quick stats */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
+          >
+            <div className="bg-gray-900/40 backdrop-blur-sm border border-gray-800 rounded-xl p-4 text-center">
+              <div className="text-2xl font-bold text-green-400 mb-1">4</div>
+              <div className="text-gray-400 text-sm">Devices Online</div>
+            </div>
+            <div className="bg-gray-900/40 backdrop-blur-sm border border-gray-800 rounded-xl p-4 text-center">
+              <div className="text-2xl font-bold text-blue-400 mb-1">12</div>
+              <div className="text-gray-400 text-sm">VMs Running</div>
+            </div>
+            <div className="bg-gray-900/40 backdrop-blur-sm border border-gray-800 rounded-xl p-4 text-center">
+              <div className="text-2xl font-bold text-red-400 mb-1">99.8%</div>
+              <div className="text-gray-400 text-sm">Uptime</div>
+            </div>
+            <div className="bg-gray-900/40 backdrop-blur-sm border border-gray-800 rounded-xl p-4 text-center">
+              <div className="text-2xl font-bold text-orange-400 mb-1">2.1TB</div>
+              <div className="text-gray-400 text-sm">Storage Used</div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Device details drawer */}
+      <AnimatePresence>
+        {selectedDevice && (
+          <>
+            {/* Backdrop */}
             <motion.div
-              key={device.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+              onClick={() => setSelectedDevice(null)}
+            />
+            
+            {/* Drawer */}
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 20, stiffness: 300 }}
+              className="fixed right-0 top-0 bottom-0 w-full max-w-2xl bg-gray-900 border-l border-gray-700 z-50 overflow-y-auto"
             >
-              <CleanCard className="p-6 h-full">
-                <div className="flex items-start gap-4 mb-4">
-                  <div className="p-3 rounded-lg bg-primary/10">
-                    <device.icon className="w-6 h-6 text-primary" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold mb-1">{device.name}</h3>
-                    <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="outline">{device.type}</Badge>
-                      <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                        <span className="text-sm text-primary font-medium">Online</span>
-                      </div>
+              <div className="p-6">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-red-600 to-orange-600 rounded-xl flex items-center justify-center">
+                      <selectedDevice.icon className="w-6 h-6 text-white" />
                     </div>
-                    <p className="text-sm text-muted-foreground">{device.description}</p>
+                    <div>
+                      <h2 className="text-2xl font-bold text-white">{selectedDevice.name}</h2>
+                      <p className="text-gray-400">{selectedDevice.type}</p>
+                    </div>
                   </div>
+                  <button
+                    onClick={() => setSelectedDevice(null)}
+                    className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+                  >
+                    <X className="w-6 h-6 text-gray-400" />
+                  </button>
+                </div>
+
+                {/* Status and metrics */}
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="bg-gray-800/50 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Activity className="w-4 h-4 text-green-400" />
+                      <span className="text-gray-300 text-sm">Status</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className={`w-2 h-2 ${getStatusDot(selectedDevice.status)} rounded-full`}></div>
+                      <span className={`font-semibold ${getStatusColor(selectedDevice.status)}`}>{selectedDevice.status}</span>
+                    </div>
+                  </div>
+                  <div className="bg-gray-800/50 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Zap className="w-4 h-4 text-blue-400" />
+                      <span className="text-gray-300 text-sm">Uptime</span>
+                    </div>
+                    <span className="font-semibold text-white">{selectedDevice.uptime}</span>
+                  </div>
+                </div>
+
+                {/* Performance metrics */}
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="bg-gray-800/50 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Cpu className="w-4 h-4 text-orange-400" />
+                      <span className="text-gray-300 text-sm">CPU Usage</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 bg-gray-700 rounded-full h-2">
+                        <div 
+                          className="bg-gradient-to-r from-orange-500 to-red-500 h-2 rounded-full transition-all duration-300"
+                          style={{ width: selectedDevice.cpu }}
+                        ></div>
+                      </div>
+                      <span className="text-white font-semibold text-sm">{selectedDevice.cpu}</span>
+                    </div>
+                  </div>
+                  <div className="bg-gray-800/50 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Database className="w-4 h-4 text-purple-400" />
+                      <span className="text-gray-300 text-sm">Memory Usage</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 bg-gray-700 rounded-full h-2">
+                        <div 
+                          className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300"
+                          style={{ width: selectedDevice.memory }}
+                        ></div>
+                      </div>
+                      <span className="text-white font-semibold text-sm">{selectedDevice.memory}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-white mb-3">Description</h3>
+                  <p className="text-gray-300 leading-relaxed">{selectedDevice.description}</p>
+                </div>
+
+                {/* Purpose */}
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-white mb-3">Lab Purpose</h3>
+                  <p className="text-gray-300 leading-relaxed">{selectedDevice.purpose}</p>
                 </div>
 
                 {/* Specifications */}
-                <div className="space-y-3">
-                  <h4 className="font-semibold text-sm mb-2">Specifications</h4>
-                  {Object.entries(device.specs).map(([key, value]) => (
-                    <div key={key} className="flex justify-between items-center py-1 border-b border-border/50">
-                      <span className="text-sm text-muted-foreground">{key}:</span>
-                      <span className="text-sm font-medium">{value}</span>
-                    </div>
-                  ))}
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-white mb-3">Technical Specifications</h3>
+                  <div className="space-y-3">
+                    {Object.entries(selectedDevice.specs).map(([key, value]) => (
+                      <div key={key} className="flex justify-between items-start py-2 border-b border-gray-700/50">
+                        <span className="text-gray-400 text-sm font-medium">{key}</span>
+                        <span className="text-white text-sm text-right max-w-[60%]">{String(value)}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
-                {/* Quick Actions */}
-                <div className="flex gap-2 mt-4 pt-4 border-t border-border/50">
-                  <CleanButton size="sm" variant="outline" className="flex-1">
-                    <Info className="w-4 h-4 mr-2" />
-                    Details
-                  </CleanButton>
-                  <CleanButton size="sm" className="flex-1">
-                    <Zap className="w-4 h-4 mr-2" />
+                {/* Connections */}
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-white mb-3">Network Connections</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedDevice.connections.map((connection, index) => (
+                      <div key={index} className="bg-gray-800/50 border border-gray-600 rounded-lg px-3 py-2">
+                        <span className="text-gray-300 text-sm">{connection}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Action buttons */}
+                <div className="flex gap-3">
+                  <button className="flex-1 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2">
+                    <Settings className="w-4 h-4" />
+                    Configure
+                  </button>
+                  <button className="flex-1 bg-gray-800 hover:bg-gray-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 border border-gray-600">
+                    <ExternalLink className="w-4 h-4" />
                     Monitor
-                  </CleanButton>
-                </div>
-              </CleanCard>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Lab Purpose */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="mt-16"
-        >
-          <CleanCard className="p-8">
-            <div className="max-w-3xl mx-auto text-center">
-              <h2 className="text-3xl font-bold mb-6">Lab Purpose & Learning</h2>
-              <p className="text-muted-foreground mb-8">
-                This homelab serves as a comprehensive learning environment for cybersecurity concepts, 
-                network administration, and enterprise security implementations.
-              </p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <Network className="w-6 h-6 text-primary" />
-                  </div>
-                  <h3 className="font-semibold mb-2">Network Security</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Implementing and testing network security policies, VLANs, and access controls
-                  </p>
-                </div>
-                
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <Shield className="w-6 h-6 text-accent" />
-                  </div>
-                  <h3 className="font-semibold mb-2">Threat Detection</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Practicing incident response and monitoring for security threats
-                  </p>
-                </div>
-                
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <Server className="w-6 h-6 text-primary" />
-                  </div>
-                  <h3 className="font-semibold mb-2">Virtualization</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Running security tools and isolated environments for testing
-                  </p>
+                  </button>
                 </div>
               </div>
-            </div>
-          </CleanCard>
-        </motion.div>
-      </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

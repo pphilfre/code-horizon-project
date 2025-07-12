@@ -162,5 +162,137 @@
     font-weight: bold;
     color: hsl(var(--primary));
   }
+
+  /* Liquid glass effect animations */
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%) skewX(-12deg);
+    }
+    100% {
+      transform: translateX(200%) skewX(-12deg);
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+      opacity: 0.7;
+    }
+    50% {
+      transform: translateY(-10px) rotate(180deg);
+      opacity: 1;
+    }
+  }
+
+  @keyframes float-delayed {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+      opacity: 0.5;
+    }
+    50% {
+      transform: translateY(-8px) rotate(-180deg);
+      opacity: 0.9;
+    }
+  }
+
+  @keyframes float-slow {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+      opacity: 0.6;
+    }
+    50% {
+      transform: translateY(-6px) rotate(90deg);
+      opacity: 0.8;
+    }
+  }
+
+  .animate-float {
+    animation: float 4s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: float-delayed 5s ease-in-out infinite 1s;
+  }
+
+  .animate-float-slow {
+    animation: float-slow 6s ease-in-out infinite 2s;
+  }
+
+  /* Enhanced glass morphism */
+  .glass-effect {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Performance optimizations for Intel MacBooks and low-end devices */
+@media (max-resolution: 144dpi) and (-webkit-min-device-pixel-ratio: 1), 
+       (resolution <= 1.5x),
+       (-webkit-max-device-pixel-ratio: 1.5) {
+  /* Reduced backdrop blur for Intel MacBooks */
+  .backdrop-blur-xl {
+    backdrop-filter: blur(8px) !important;
+  }
+  
+  .backdrop-blur-sm {
+    backdrop-filter: blur(2px) !important;
+  }
+  
+  /* Simplified animations for better performance */
+  .animate-pulse {
+    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
+  }
+  
+  /* Reduce shadow complexity */
+  .shadow-2xl {
+    box-shadow: 0 10px 25px -3px rgb(0 0 0 / 0.1) !important;
+  }
+}
+
+/* Detect Intel MacBooks specifically */
+@supports (-webkit-touch-callout: none) {
+  @media (max-device-width: 1680px) and (max-device-height: 1050px) and (-webkit-min-device-pixel-ratio: 2) {
+    /* Intel MacBook Pro optimizations */
+    .backdrop-blur-xl {
+      backdrop-filter: blur(6px) !important;
+    }
+    
+    .backdrop-blur-sm {
+      backdrop-filter: blur(1px) !important;
+    }
+    
+    /* Disable complex animations on Intel MacBooks */
+    .animate-float,
+    .animate-float-delayed,
+    .animate-float-slow {
+      animation: none !important;
+      transform: none !important;
+    }
+    
+    /* Simplified gradients */
+    .bg-gradient-to-br {
+      background: rgba(255, 255, 255, 0.05) !important;
+    }
+  }
+}
+
+/* Prefer reduced motion for better performance */
+@media (prefers-reduced-motion: reduce) {
+  .animate-shimmer,
+  .animate-float,
+  .animate-float-delayed,
+  .animate-float-slow,
+  .animate-pulse {
+    animation: none !important;
+  }
+  
+  /* Disable all transitions for maximum performance */
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 

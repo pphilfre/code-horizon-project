@@ -39,7 +39,7 @@ export const About = () => {
   ];
 
   return (
-    <div className="min-h-screen pt-24 pb-16">
+    <div className="min-h-screen pt-24 pb-16 bg-black">
       <div className="max-w-6xl mx-auto px-6">
         {/* Header */}
         <motion.div

@@ -1,88 +1,52 @@
 import { motion } from 'framer-motion';
+import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CleanCard } from '@/components/ui/clean-card';
 import { CleanButton } from '@/components/ui/clean-button';
 import { Badge } from '@/components/ui/badge';
-import { Github, ExternalLink, Shield, Network, Database, Terminal } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { getAllProjects, getAllTags } from '@/data';
+import { getStatusColor } from '@/types/project';
+import { Github, ExternalLink, Search, X } from 'lucide-react';
 
 export const Projects = () => {
-  const projects = [
-    {
-      id: 1,
-      title: 'Network Security Monitor',
-      description: 'Real-time network monitoring system with intrusion detection capabilities built using Python and Wireshark.',
-      tags: ['Python', 'Wireshark', 'Network Security', 'IDS'],
-      icon: Network,
-      status: 'Completed',
-      github: '#',
-      demo: '#',
-      features: [
-        'Real-time packet analysis',
-        'Anomaly detection algorithms',
-        'Alert system with notifications',
-        'Traffic pattern visualization'
-      ]
-    },
-    {
-      id: 2,
-      title: 'Vulnerability Assessment Tool',
-      description: 'Automated vulnerability scanner for web applications with comprehensive reporting and remediation suggestions.',
-      tags: ['Python', 'Security', 'Web Security', 'Automation'],
-      icon: Shield,
-      status: 'In Progress',
-      github: '#',
-      demo: '#',
-      features: [
-        'OWASP Top 10 coverage',
-        'Automated scanning',
-        'Detailed vulnerability reports',
-        'Remediation recommendations'
-      ]
-    },
-    {
-      id: 3,
-      title: 'Secure Database Manager',
-      description: 'Database security tool with encryption, access control, and audit logging for enterprise environments.',
-      tags: ['Database', 'Encryption', 'Access Control', 'Audit'],
-      icon: Database,
-      status: 'Planned',
-      github: '#',
-      demo: '#',
-      features: [
-        'AES-256 encryption',
-        'Role-based access control',
-        'Comprehensive audit trails',
-        'Compliance reporting'
-      ]
-    },
-    {
-      id: 4,
-      title: 'Penetration Testing Suite',
-      description: 'Collection of custom penetration testing tools and scripts for ethical hacking and security assessments.',
-      tags: ['Penetration Testing', 'Ethical Hacking', 'Security Tools', 'Bash'],
-      icon: Terminal,
-      status: 'In Progress',
-      github: '#',
-      demo: '#',
-      features: [
-        'Custom exploit frameworks',
-        'Automated reconnaissance',
-        'Payload generation',
-        'Report generation'
-      ]
-    }
-  ];
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  
+  // Get projects and tags from external data
+  const projects = getAllProjects();
+  const allTags = getAllTags();
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Completed': return 'bg-primary text-background';
-      case 'In Progress': return 'bg-accent text-background';
-      case 'Planned': return 'bg-muted text-muted-foreground';
-      default: return 'bg-secondary text-secondary-foreground';
-    }
+  // Filter projects based on search and tags
+  const filteredProjects = useMemo(() => {
+    return projects.filter(project => {
+      const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          project.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          project.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+      
+      const matchesTags = selectedTags.length === 0 || 
+                         selectedTags.every(tag => project.tags.includes(tag));
+      
+      return matchesSearch && matchesTags;
+    });
+  }, [searchTerm, selectedTags]);
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags(prev => 
+      prev.includes(tag) 
+        ? prev.filter(t => t !== tag)
+        : [...prev, tag]
+    );
+  };
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setSelectedTags([]);
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-16">
+    <div className="min-h-screen pt-24 pb-16 bg-black">
       <div className="max-w-6xl mx-auto px-6">
         {/* Header */}
         <motion.div
@@ -92,21 +56,79 @@ export const Projects = () => {
           className="text-center mb-16"
         >
           <h1 className="text-4xl md:text-6xl font-bold mb-6">Projects</h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
             Showcase of cybersecurity projects, tools, and research implementations
           </p>
         </motion.div>
 
+        {/* Search and Filter */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mb-12"
+        >
+          <CleanCard className="p-6">
+            {/* Search Bar */}
+            <div className="relative mb-6">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Input
+                placeholder="Search projects..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+
+            {/* Tag Filters */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium">Filter by tags:</h3>
+                {(selectedTags.length > 0 || searchTerm) && (
+                  <CleanButton
+                    variant="outline"
+                    size="sm"
+                    onClick={clearFilters}
+                    className="text-xs flex items-center"
+                  >
+                    <X className="w-3 h-3 mr-1" />
+                    Clear all
+                  </CleanButton>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {allTags.map((tag) => (
+                  <Badge
+                    key={tag}
+                    variant={selectedTags.includes(tag) ? "default" : "outline"}
+                    className="cursor-pointer hover:bg-primary/80 transition-colors"
+                    onClick={() => toggleTag(tag)}
+                  >
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+
+            {/* Results Count */}
+            <div className="mt-4 text-sm text-muted-foreground">
+              {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''} found
+            </div>
+          </CleanCard>
+        </motion.div>
+
         {/* Projects Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {projects.map((project, index) => (
+          {filteredProjects.map((project, index) => (
             <motion.div
-              key={project.id}
+              key={project.slug}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
             >
-              <CleanCard className="h-full p-6 group">
+              <CleanCard className="h-full p-6 group cursor-pointer hover:bg-background/50 transition-colors"
+                onClick={() => navigate(`/projects/${project.slug}`)}
+              >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div className="p-2 rounded-lg bg-primary/10">
@@ -152,16 +174,22 @@ export const Projects = () => {
                   <CleanButton
                     size="sm"
                     variant="outline"
-                    className="flex-1"
-                    onClick={() => window.open(project.github, '_blank')}
+                    className="flex-1 flex items-center justify-center"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(project.github, '_blank');
+                    }}
                   >
                     <Github className="w-4 h-4 mr-2" />
                     Code
                   </CleanButton>
                   <CleanButton
                     size="sm"
-                    className="flex-1"
-                    onClick={() => window.open(project.demo, '_blank')}
+                    className="flex-1 flex items-center justify-center"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(project.demo, '_blank');
+                    }}
                   >
                     <ExternalLink className="w-4 h-4 mr-2" />
                     Demo
@@ -171,6 +199,26 @@ export const Projects = () => {
             </motion.div>
           ))}
         </div>
+
+        {/* No Results */}
+        {filteredProjects.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center py-16"
+          >
+            <CleanCard className="p-8">
+              <h3 className="text-xl font-bold mb-2">No projects found</h3>
+              <p className="text-muted-foreground mb-4">
+                Try adjusting your search terms or clearing the filters.
+              </p>
+              <CleanButton onClick={clearFilters} className="flex items-center">
+                Clear filters
+              </CleanButton>
+            </CleanCard>
+          </motion.div>
+        )}
 
         {/* Coming Soon Section */}
         <motion.div
@@ -188,12 +236,17 @@ export const Projects = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <CleanButton
-                onClick={() => window.open('https://github.com/freddie', '_blank')}
+                onClick={() => window.open('https://github.com/philfreddie', '_blank')}
+                className="flex items-center justify-center"
               >
                 <Github className="w-4 h-4 mr-2" />
                 Follow on GitHub
               </CleanButton>
-              <CleanButton variant="outline">
+              <CleanButton 
+                variant="outline"
+                onClick={() => window.open('https://github.com/orgs/philfreddie/repositories', '_blank')}
+                className="flex items-center justify-center"
+              >
                 <ExternalLink className="w-4 h-4 mr-2" />
                 View All Projects
               </CleanButton>
