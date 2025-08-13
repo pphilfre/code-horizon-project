@@ -1,0 +1,9 @@
+{
+  "subject": "acct:admin@freddiephilpot.dev",
+  "links": [
+    {
+      "rel": "http://openid.net/specs/connect/1.0/issuer",
+      "href": "https://dev-dwcxc2f0sbqhpzmb.us.auth0.com/"
+    }
+  ]
+}
